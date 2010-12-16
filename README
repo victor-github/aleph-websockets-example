@@ -1,0 +1,50 @@
+This is a full working example illustrating HTML5 websockets with the Aleph async server, along with synchronous HTTP requests from within the same application
+https://github.com/ztellman/aleph
+
+It uses compojure for routes, and a very small part for the Enlive templating library for web scraping
+(https://github.com/cgrand/enlive)
+
+This simple example started with a farily simple, and rather amusing practical application:
+retrieving and displaying message board postings synchronously, so as to eliminate frequent clicking on the refresh button, which is quite common for high-traffic message boards. Message would therefore be displayed as they come in a twitter-like fashion.
+
+The example used here is the high-traffic message board 4chan.
+However, one caveat is in order for this particular site: the images retrieved are being blocked by a script that exists on their side, since no "Referer" information is sent in the headers.
+Therefore, unless you put in "Referer" information in the GET requests, you will not be able to use this properly. The alternative is to use a different site as your base-url.
+
+Logic:
+ you open up in the browser IP:PORT/<thread_id> (thread_id is just for the current example, you can adjust this initial route to suit your needs)
+ aleph renders public/ws.html, which opens up a websockets connection, calling the function websocket-activity in socket.clj
+ in websocket-activity, your desired url is being "polled" with regular sync HTTP requests
+ response is parsed and continually enqueued in the channel, and the responses are then synchronously rendered by ws.html as they arrive
+
+
+After running "lein deps" you need to make the changes below, before starting Jetty with "run_this"
+
+public/ws.html:
+
+put your server's IP in 
+        ws = new WebSocket("ws://IP:PORT/socket/get");
+
+appends data using jquery appends
+        ws.onmessage = function(evt) { $("#msg").append("<p>"+evt.data+"</p>"); };
+
+
+
+src/aleph/socket.clj
+
+  uses an atom to store the full base-url, since it is constructed from the thread id string that we pass
+  normally, you would define *base-url* to be what you need, and remove the dynamic construction based on the GET parameter
+
+ adjust paths in the routes
+  e.g.    {:root "full-path-to-project/aleph-websockets-ring-example/public"}
+
+
+First accessed route YOUR-IP:YOUR-PORT/thread_id. This is a synchronous Ring-style request
+
+(GET "/:thread_id" {params :params}
+  builds the full base-url based on the thread id, and then 
+renders the ws.html page that will open a websocket connection. that connection will communicate with the /socket/get route:
+(GET "/socket/get" [] (wrap-aleph-handler websocket-activity))
+- the handling of this is done asynchronously
+
+

@@ -1,0 +1,3 @@
+rm log
+touch log
+java -Xmx512M -cp "lib/*:src/" clojure.main src/aleph/socket.clj 

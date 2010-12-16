@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <script type="text/javascript" src="js/jquery-1.4.3.min.js"></script>
+
+    <script>
+      $(document).ready(function(){
+        function debug(str){ $("#debug").append("<p>"+str+"</p>"); };
+ 
+        ws = new WebSocket("ws://YOUR-IP:YOUR-PORT/socket/get");
+        ws.onmessage = function(evt) { $("#msg").append("<p>"+evt.data+"</p>"); };
+        //ws.onmessage = function(evt) { $("#msg").('<table><tbody>'+evt.data+'</tbody></table>'); };
+        ws.onclose = function() { debug("socket closed"); };
+        ws.onopen = function() {
+          debug("Connected...");
+          ws.send("hello server");
+        };
+      });
+    </script>
+  </head>
+  <body>
+    <div id="debug"></div>
+    <div id="msg"></div>
+  </body>
+</html>

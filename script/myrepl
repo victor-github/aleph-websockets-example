@@ -1,0 +1,4 @@
+#rm log
+#touch log
+#java -cp "lib/*:src/" clojure.main src/aleph/socket.clj #>> log 2>&1
+java -Xmx512M -cp "lib/*:src/":jline-0.9.94.jar:clojure.jar jline.ConsoleRunner clojure.main
