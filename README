@@ -4,12 +4,9 @@ https://github.com/ztellman/aleph
 It uses compojure for routes, and a very small part for the Enlive templating library for web scraping
 (https://github.com/cgrand/enlive)
 
-This simple example started with a farily simple, and rather amusing practical application:
+This simple example started with a farily practical application:
 retrieving and displaying message board postings synchronously, so as to eliminate frequent clicking on the refresh button, which is quite common for high-traffic message boards. Message would therefore be displayed as they come in a twitter-like fashion.
 
-The example used here is the high-traffic message board 4chan.
-However, one caveat is in order for this particular site: the images retrieved are being blocked by a script that exists on their side, since no "Referer" information is sent in the headers.
-Therefore, unless you put in "Referer" information in the GET requests, you will not be able to use this properly. The alternative is to use a different site as your base-url.
 
 Logic:
  you open up in the browser IP:PORT/<thread_id> (thread_id is just for the current example, you can adjust this initial route to suit your needs)
