@@ -23,7 +23,7 @@
 (defn websocket-activity [ch handshake]
   (receive ch
    (fn [name]
-     (doseq [i (range 100)]   ;only do it 100 times for testing 
+     (doseq [i (range 100)]   
       (. Thread (sleep 1000))
       (let [comment-thread    (html/select (fetch-url @*base-url*) [:table (html/has [:td.doubledash])])
             ;if you were to retrieve the whole form in the page: (html/select (fetch-url @*base-url*) [:form])
@@ -46,7 +46,7 @@
 
   (GET "/:thread_id" {params :params} 
        (do
-         (swap! *base-url* (fn[_] (str "http://boards.4chan.org/b/res/" (params "thread_id")))) 
+         (swap! *base-url* (fn[_] (str "http://boards.url.org/b/res/" (params "thread_id")))) 
          (spit "public/test_url" @*base-url*)
          (layout (slurp "public/ws.html")) ) )  
   (GET "/socket/get" [] (wrap-aleph-handler websocket-activity))
